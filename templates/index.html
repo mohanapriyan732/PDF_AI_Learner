@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Study Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div class="hero-text">
+          <p class="eyebrow">AI Study Assistant</p>
+          <h1>Turn any PDF into a smart learning experience.</h1>
+          <p class="subtitle">Upload a document and generate summaries, notes, quizzes, flashcards, interviews, study plans, and translations in seconds.</p>
+          <div class="actions">
+            <label class="upload-card" for="pdf-input">
+              <input id="pdf-input" type="file" accept="application/pdf" />
+              <span>📄 Upload PDF</span>
+            </label>
+            <button id="theme-toggle" class="ghost-btn" type="button">🌙 Theme</button>
+          </div>
+        </div>
+        <div class="hero-illustration">
+          <div class="orb"></div>
+          <div class="card glass">
+            <h3>Study smarter</h3>
+            <p>Personalized AI coaching for every chapter.</p>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <section class="panel upload-panel">
+          <div id="drop-zone" class="drop-zone">
+            <p><strong>Drag and drop your PDF</strong></p>
+            <p>or click to browse</p>
+          </div>
+          <div id="upload-meta" class="upload-meta"></div>
+        </section>
+
+        <section class="panel tools-panel">
+          <div class="tool-grid">
+            <button class="tool-btn" data-action="summary">🧠 Summary</button>
+            <button class="tool-btn" data-action="notes">📝 Notes</button>
+            <button class="tool-btn" data-action="flashcards">🃏 Flashcards</button>
+            <button class="tool-btn" data-action="quiz">❓ Quiz</button>
+            <button class="tool-btn" data-action="interview">🎤 Interview</button>
+            <button class="tool-btn" data-action="plan">📅 Planner</button>
+            <button class="tool-btn" data-action="translate">🌐 Translate</button>
+            <button class="tool-btn" data-action="export">📤 Export</button>
+          </div>
+        </section>
+
+        <section class="panel results-panel">
+          <div id="status" class="status">Upload a PDF to start.</div>
+          <div id="result-area" class="result-area"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  </body>
+</html>
