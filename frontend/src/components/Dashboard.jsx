@@ -38,7 +38,7 @@ export default function Dashboard({ onOpen, sessionData, onUploadSession }){
       })
       setStatus('Upload complete. Choose a study tool to generate content.')
     }catch(err){
-      setStatus('Upload failed. Check that the Flask backend is running.')
+       setStatus(err?.message || 'Upload failed. Check the backend connection.')
     }
   }
 
@@ -85,7 +85,7 @@ export default function Dashboard({ onOpen, sessionData, onUploadSession }){
         setStatus(`${view.charAt(0).toUpperCase() + view.slice(1)} ready.`)
       }
     } catch (err) {
-      setStatus('Generation failed. Check the backend connection.')
+       setStatus(err?.message || 'Generation failed. Check the backend connection.')
     }
   }
 
