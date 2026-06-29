@@ -6,3 +6,7 @@ __pycache__/
 .venv/
 uploads/*
 exports/*
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/

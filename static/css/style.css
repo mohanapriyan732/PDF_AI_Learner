@@ -48,3 +48,77 @@ body {
 .result-card { margin-top: 14px; padding: 14px; background: rgba(255,255,255,0.04); border-radius: 16px; }
 pre { white-space: pre-wrap; word-break: break-word; }
 @media (max-width: 800px) { .hero { grid-template-columns: 1fr; } .tool-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* New UI components */
+.skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.04)); padding: 20px; border-radius: 12px; animation: pulse 1.4s infinite; }
+.skeleton-header { height: 18px; width: 40%; background: rgba(255,255,255,0.06); margin-bottom: 12px; border-radius: 6px; }
+.skeleton-lines { height: 60px; background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); border-radius: 6px; }
+
+@keyframes pulse { 0% { opacity: 0.85 } 50% { opacity: 0.6 } 100% { opacity: 0.85 } }
+
+/* Summary card */
+.summary-card { margin-top: 12px; padding: 18px; border-radius: 14px; background: linear-gradient(135deg, rgba(124,156,255,0.06), rgba(110,240,210,0.02)); box-shadow: 0 8px 24px rgba(2,6,23,0.5); }
+.summary-header { display:flex; justify-content:space-between; align-items:center; gap:12px }
+.summary-points { margin: 12px 0; padding-left: 18px; color: var(--text); }
+.summary-highlights { margin-top: 8px; }
+.pill { display:inline-block; background:var(--accent-soft); color:var(--accent); padding:6px 8px; border-radius:999px; margin-right:8px; }
+
+/* Notes */
+.notes-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:12px; margin-top:12px }
+.note-card { background: rgba(255,255,255,0.03); padding:12px; border-radius:12px; border:1px solid var(--border); }
+.note-body { margin-top:8px }
+.note-line { margin:6px 0; color:var(--muted) }
+
+/* Flashcards */
+.flashcards { margin-top:12px }
+.card-stage { perspective:1200px; height:220px; display:flex; align-items:center; justify-content:center }
+.flashcard { width:320px; height:200px; margin:0 8px; position:relative; transform-style:preserve-3d; transition: transform 0.8s cubic-bezier(.2,.8,.2,1); cursor:pointer; display:none }
+.flashcard.active { display:block }
+.flashcard.flipped { transform: rotateY(180deg); }
+.flashcard .front, .flashcard .back { position:absolute; inset:0; backface-visibility:hidden; border-radius:12px; padding:18px; display:flex; align-items:center; justify-content:center; text-align:center }
+.flashcard .front { background: linear-gradient(135deg,var(--panel), rgba(255,255,255,0.02)); }
+.flashcard .back { background: linear-gradient(135deg, rgba(124,156,255,0.06), rgba(19,33,59,0.04)); transform: rotateY(180deg); }
+.card-controls { display:flex; gap:12px; align-items:center; justify-content:center; margin-top:12px }
+
+/* Quiz */
+.quiz-card { padding:14px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent); }
+.quiz-progress { font-weight:700; color:var(--accent); margin-bottom:8px }
+.quiz-options { display:flex; flex-direction:column; gap:8px; margin-top:8px }
+.quiz-option { padding:10px 12px; border-radius:10px; background:var(--panel); border:1px solid var(--border); text-align:left; cursor:pointer }
+.quiz-option.selected { box-shadow: 0 6px 18px rgba(124,156,255,0.08); transform:translateY(-2px) }
+.quiz-feedback { margin-top:8px }
+.correct { color:#4ade80; font-weight:700 }
+.wrong { color:#fb7185; font-weight:700 }
+
+/* Chat / Interview */
+.chat-panel { display:flex; flex-direction:column; gap:8px; height:360px }
+.chat-window { flex:1; overflow:auto; padding:12px; display:flex; flex-direction:column; gap:8px }
+.bubble { max-width:78%; padding:10px 12px; border-radius:12px; }
+.bubble.ai { background: rgba(255,255,255,0.03); align-self:flex-start }
+.bubble.user { background: linear-gradient(90deg,var(--accent), #6ef0d2); color:#082032; align-self:flex-end }
+.bubble.typing { opacity:0.8; font-style:italic }
+.chat-input { display:flex; gap:8px }
+.chat-input input { flex:1; padding:10px 12px; border-radius:10px; border:1px solid var(--border); background:transparent; color:var(--text) }
+
+/* Planner */
+.planner { display:flex; flex-direction:column; gap:10px; margin-top:12px }
+.plan-card { display:flex; justify-content:space-between; padding:12px; border-radius:10px; background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid var(--border) }
+.plan-left h4 { margin:0 }
+.progress { width:140px; height:10px; background:rgba(255,255,255,0.03); border-radius:999px }
+.progress-bar { height:100%; background:linear-gradient(90deg,var(--accent), #6ef0d2); border-radius:999px }
+
+/* Translate */
+.translate-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px }
+.translate-card { padding:12px; border-radius:10px; background: rgba(255,255,255,0.03); position:relative }
+.translate-card .lang { position:absolute; top:10px; right:12px; font-size:12px; color:var(--muted) }
+.translate-text { white-space:pre-wrap; margin-top:24px }
+.copy-btn { position:absolute; bottom:10px; right:10px; padding:6px 10px; border-radius:8px; border:1px solid var(--border); background:var(--panel); cursor:pointer }
+
+/* Utility */
+.muted { color:var(--muted); font-size:13px }
+
+@media (max-width:800px) {
+  .translate-grid { grid-template-columns: 1fr }
+  .flashcard { width:260px }
+  .card-stage { height:180px }
+}

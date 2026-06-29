@@ -1,8 +1,8 @@
 import os
-from flask import Flask, jsonify, render_template, request, send_from_directory
-from flask_cors import CORS
+from flask import Flask, jsonify, request, send_from_directory
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
+from flask_cors import CORS
 
 from services.pdf_service import extract_text_from_pdf
 from services.summary_service import generate_summary
@@ -28,10 +28,6 @@ def create_app():
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret-key")
 
     ensure_upload_dirs(app.config["UPLOAD_FOLDER"], app.config["EXPORT_FOLDER"])
-
-    @app.route("/")
-    def index():
-        return render_template("index.html")
 
     @app.route("/health")
     def health():
