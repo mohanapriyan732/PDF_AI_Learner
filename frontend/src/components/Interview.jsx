@@ -12,12 +12,22 @@ export default function Interview({ data }){
   const [text, setText] = useState('')
 
   function send(){
-    if(!text) return
-    setArr((current) => [...current, { role: 'user', text }])
+    if(!text.trim()) return
+    const answer = text.trim()
+    setArr((current) => [...current, { role: 'user', text: answer }])
     setText('')
+
+    const followUps = [
+      'Great answer. Can you explain how you would apply that in a real project?',
+      'What would you do if you had to simplify this for a beginner?',
+      'Can you give one concrete example that supports your point?',
+      'How would you respond if the interviewer challenged this approach?',
+    ]
+
+    const followUp = followUps[arr.length % followUps.length]
     setTimeout(() => {
-      setArr((current) => [...current, { role: 'ai', text: 'Thanks — here is a follow-up question based on your answer.' }])
-    }, 800)
+      setArr((current) => [...current, { role: 'ai', text: followUp }])
+    }, 600)
   }
 
   return (

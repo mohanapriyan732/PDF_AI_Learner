@@ -22,10 +22,11 @@ const views = [
 export default function App() {
   const [view, setView] = useState('dashboard')
   const [payload, setPayload] = useState(null)
+  const [sessionData, setSessionData] = useState({ text: '', metadata: null })
 
-  const openView = (nextView, nextPayload = payload) => {
+  const openView = (nextView, nextPayload) => {
     setView(nextView)
-    setPayload(nextPayload)
+    setPayload(nextPayload || { text: sessionData.text, metadata: sessionData.metadata })
   }
 
   return (
@@ -50,14 +51,14 @@ export default function App() {
         </header>
 
         <main>
-          {view === 'dashboard' && <Dashboard onOpen={openView} />}
+          {view === 'dashboard' && <Dashboard onOpen={openView} sessionData={sessionData} onUploadSession={setSessionData} />}
           {view === 'summary' && <Summary data={payload} />}
           {view === 'notes' && <Notes data={payload} />}
           {view === 'flashcards' && <Flashcards data={payload} />}
           {view === 'quiz' && <Quiz data={payload} />}
           {view === 'interview' && <Interview data={payload} />}
           {view === 'planner' && <Planner data={payload} />}
-          {view === 'translate' && <Translate data={payload} />}
+          {view === 'translate' && <Translate data={payload} sessionData={sessionData} />}
         </main>
       </div>
     </div>

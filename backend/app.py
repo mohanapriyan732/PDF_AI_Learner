@@ -1,33 +1,61 @@
 import os
-from flask import Flask, jsonify, request, send_from_directory
-from dotenv import load_dotenv
-from werkzeug.utils import secure_filename
-from flask_cors import CORS
 
-from services.pdf_service import extract_text_from_pdf
-from services.summary_service import generate_summary
-from services.notes_service import generate_notes
-from services.flashcard_service import generate_flashcards
-from services.quiz_service import generate_quiz, evaluate_quiz
-from services.interview_service import generate_interview_questions
-from services.planner_service import generate_study_plan
-from services.translation_service import translate_content
+from dotenv import load_dotenv
+from flask import Flask, jsonify, render_template, request, send_from_directory
+from flask_cors import CORS
+from werkzeug.utils import secure_filename
+
 from services.export_service import export_content
+from services.flashcard_service import generate_flashcards
+from services.interview_service import generate_interview_questions
+from services.notes_service import generate_notes
+from services.pdf_service import extract_text_from_pdf
+from services.planner_service import generate_study_plan
+from services.quiz_service import evaluate_quiz, generate_quiz
+from services.summary_service import generate_summary
+from services.translation_service import translate_content
 from utils.helpers import allowed_file, ensure_upload_dirs
 
 
-load_dotenv()
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+load_dotenv(os.path.join(BASE_DIR, ".env"))
+
+
+def unique_file_path(folder, filename):
+    filename = secure_filename(filename)
+    base, ext = os.path.splitext(filename)
+    save_path = os.path.join(folder, filename)
+    counter = 1
+
+    while os.path.exists(save_path):
+        filename = f"{base}_{counter}{ext}"
+        save_path = os.path.join(folder, filename)
+        counter += 1
+
+    return filename, save_path
 
 
 def create_app():
-    app = Flask(__name__)
+    base_dir = os.path.dirname(os.path.dirname(__file__))
+
+    app = Flask(
+        __name__,
+        template_folder=os.path.join(base_dir, "templates"),
+        static_folder=os.path.join(base_dir, "static"),
+    )
+
     CORS(app)
-    app.config["UPLOAD_FOLDER"] = os.path.join(os.path.dirname(__file__), "uploads")
-    app.config["EXPORT_FOLDER"] = os.path.join(os.path.dirname(__file__), "exports")
+
+    app.config["UPLOAD_FOLDER"] = os.path.join(base_dir, "uploads")
+    app.config["EXPORT_FOLDER"] = os.path.join(base_dir, "exports")
     app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret-key")
 
     ensure_upload_dirs(app.config["UPLOAD_FOLDER"], app.config["EXPORT_FOLDER"])
+
+    @app.route("/")
+    def index():
+        return render_template("index.html")
 
     @app.route("/health")
     def health():
@@ -35,7 +63,11 @@ def create_app():
 
     @app.route("/exports/<path:filename>")
     def download_export(filename):
-        return send_from_directory(app.config["EXPORT_FOLDER"], filename, as_attachment=True)
+        return send_from_directory(
+            app.config["EXPORT_FOLDER"],
+            filename,
+            as_attachment=True,
+        )
 
     @app.route("/upload", methods=["POST"])
     def upload_pdf():
@@ -43,17 +75,22 @@ def create_app():
             return jsonify({"success": False, "message": "No file uploaded"}), 400
 
         uploaded_file = request.files["file"]
+
         if uploaded_file.filename == "":
             return jsonify({"success": False, "message": "No selected file"}), 400
 
         if not allowed_file(uploaded_file.filename):
             return jsonify({"success": False, "message": "Only PDF files are allowed"}), 400
 
-        filename = secure_filename(uploaded_file.filename)
-        save_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+        filename, save_path = unique_file_path(
+            app.config["UPLOAD_FOLDER"],
+            uploaded_file.filename,
+        )
+
         uploaded_file.save(save_path)
 
         text = extract_text_from_pdf(save_path)
+
         if not text:
             return jsonify({"success": False, "message": "Unable to extract text from PDF"}), 400
 
@@ -69,8 +106,10 @@ def create_app():
     def generate_summary_route():
         payload = request.get_json(silent=True) or {}
         text = payload.get("text", "")
+
         if not text:
             return jsonify({"success": False, "message": "No text provided"}), 400
+
         result = generate_summary(text)
         return jsonify({"success": True, **result})
 
@@ -78,8 +117,10 @@ def create_app():
     def generate_notes_route():
         payload = request.get_json(silent=True) or {}
         text = payload.get("text", "")
+
         if not text:
             return jsonify({"success": False, "message": "No text provided"}), 400
+
         result = generate_notes(text)
         return jsonify({"success": True, **result})
 
@@ -87,8 +128,10 @@ def create_app():
     def generate_flashcards_route():
         payload = request.get_json(silent=True) or {}
         text = payload.get("text", "")
+
         if not text:
             return jsonify({"success": False, "message": "No text provided"}), 400
+
         result = generate_flashcards(text)
         return jsonify({"success": True, **result})
 
@@ -96,9 +139,13 @@ def create_app():
     def generate_quiz_route():
         payload = request.get_json(silent=True) or {}
         text = payload.get("text", "")
+        num_questions = payload.get("num_questions", 10)
+        difficulty = payload.get("difficulty", "medium")
+
         if not text:
             return jsonify({"success": False, "message": "No text provided"}), 400
-        result = generate_quiz(text, payload.get("num_questions", 10), payload.get("difficulty", "medium"))
+
+        result = generate_quiz(text, num_questions, difficulty)
         return jsonify({"success": True, **result})
 
     @app.route("/evaluate-quiz", methods=["POST"])
@@ -106,6 +153,7 @@ def create_app():
         payload = request.get_json(silent=True) or {}
         answers = payload.get("answers", [])
         questions = payload.get("questions", [])
+
         result = evaluate_quiz(answers, questions)
         return jsonify({"success": True, **result})
 
@@ -113,8 +161,10 @@ def create_app():
     def generate_interview_route():
         payload = request.get_json(silent=True) or {}
         text = payload.get("text", "")
+
         if not text:
             return jsonify({"success": False, "message": "No text provided"}), 400
+
         result = generate_interview_questions(text)
         return jsonify({"success": True, **result})
 
@@ -124,8 +174,10 @@ def create_app():
         text = payload.get("text", "")
         exam_date = payload.get("exam_date", "")
         hours_per_day = payload.get("hours_per_day", 2)
+
         if not text:
             return jsonify({"success": False, "message": "No text provided"}), 400
+
         result = generate_study_plan(text, exam_date, hours_per_day)
         return jsonify({"success": True, **result})
 
@@ -134,18 +186,30 @@ def create_app():
         payload = request.get_json(silent=True) or {}
         text = payload.get("text", "")
         target_language = payload.get("target_language", "Spanish")
+
         if not text:
             return jsonify({"success": False, "message": "No text provided"}), 400
+
         result = translate_content(text, target_language)
         return jsonify({"success": True, **result})
+    
+    
+    @app.route("/debug-key")
+    def debug_key():
+             return jsonify({
+                    "has_google_api_key": bool(os.getenv("GOOGLE_API_KEY"))
+               })
+    
 
     @app.route("/export", methods=["POST"])
     def export_route():
         payload = request.get_json(silent=True) or {}
         content = payload.get("content", "")
         export_type = payload.get("type", "summary")
+
         if not content:
             return jsonify({"success": False, "message": "No content provided"}), 400
+
         result = export_content(content, export_type, app.config["EXPORT_FOLDER"])
         return jsonify({"success": True, **result})
 
@@ -156,4 +220,8 @@ app = create_app()
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=int(os.getenv("PORT", 5000)))
+    app.run(
+        debug=True,
+        host="0.0.0.0",
+        port=int(os.getenv("PORT", 5000)),
+    )

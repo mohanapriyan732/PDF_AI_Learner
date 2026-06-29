@@ -17,15 +17,21 @@ export default function Flashcards({ data }){
 
       <div className="flex justify-center">
         <div className="w-full max-w-md cursor-pointer" onClick={() => setFlipped(!flipped)}>
-          <div className="relative h-64 rounded-2xl border border-slate-800 bg-slate-950/70 shadow-2xl" style={{ transformStyle: 'preserve-3d', transition: 'transform 0.7s' }}>
-            <div className={`absolute inset-0 flex items-center justify-center rounded-2xl p-6 text-center text-lg font-medium ${flipped ? 'opacity-0' : 'opacity-100'}`} style={{ backfaceVisibility: 'hidden' }}>
-              <div>{cur.front || cur.question || 'Card front'}</div>
-            </div>
-            <div className={`absolute inset-0 flex items-center justify-center rounded-2xl bg-indigo-600/90 p-6 text-center text-lg font-medium ${flipped ? 'opacity-100' : 'opacity-0'}`} style={{ transform: 'rotateY(180deg)', backfaceVisibility: 'hidden' }}>
-              <div>{cur.back || cur.answer || 'Card back'}</div>
+          <div className="relative h-64 rounded-2xl border border-slate-800 bg-slate-950/70 shadow-2xl" style={{ perspective: '1200px' }}>
+            <div className="relative h-full w-full" style={{ transformStyle: 'preserve-3d', transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)', transition: 'transform 0.8s' }}>
+              <div className="absolute inset-0 flex h-full w-full items-center justify-center rounded-2xl p-6 text-center text-lg font-medium" style={{ backfaceVisibility: 'hidden' }}>
+                <div>{cur.front || cur.question || 'Card front'}</div>
+              </div>
+              <div className="absolute inset-0 flex h-full w-full items-center justify-center rounded-2xl bg-indigo-600/90 p-6 text-center text-lg font-medium" style={{ transform: 'rotateY(180deg)', backfaceVisibility: 'hidden' }}>
+                <div>{cur.back || cur.answer || 'Card back'}</div>
+              </div>
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="mt-4 flex justify-center">
+        <button onClick={() => setFlipped(!flipped)} className="rounded-full bg-indigo-600 px-4 py-2 text-sm">Reveal Answer</button>
       </div>
 
       <div className="mt-4 flex items-center justify-between">

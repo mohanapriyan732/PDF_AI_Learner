@@ -7,14 +7,13 @@ import {
   generateQuiz,
   generateInterview,
   generatePlan,
-  translateText,
 } from '../services/api'
 
-export default function Dashboard({ onOpen }){
+export default function Dashboard({ onOpen, sessionData, onUploadSession }){
   const [file, setFile] = useState(null)
   const [status, setStatus] = useState('Upload a PDF to get started')
-  const [uploadedText, setUploadedText] = useState('')
-  const [meta, setMeta] = useState(null)
+  const uploadedText = sessionData?.text || ''
+  const meta = sessionData?.metadata || null
 
   async function handleUpload(e){
     const f = e.target.files[0]
@@ -29,11 +28,13 @@ export default function Dashboard({ onOpen }){
         return
       }
 
-      setUploadedText(res.text_preview || '')
-      setMeta({
-        filename: res.filename,
-        pageCount: res.page_count,
-        fileSize: res.file_size,
+      onUploadSession({
+        text: res.text_preview || '',
+        metadata: {
+          filename: res.filename,
+          pageCount: res.page_count,
+          fileSize: res.file_size,
+        },
       })
       setStatus('Upload complete. Choose a study tool to generate content.')
     }catch(err){
@@ -50,6 +51,12 @@ export default function Dashboard({ onOpen }){
     setStatus(`Generating ${view}...`)
     try {
       let data = null
+      if (view === 'translate') {
+        onOpen('translate', { text: uploadedText, metadata: meta })
+        setStatus('Translation ready. Select a language and translate.')
+        return
+      }
+
       switch (view) {
         case 'summary':
           data = await generateSummary(uploadedText)
@@ -68,9 +75,6 @@ export default function Dashboard({ onOpen }){
           break
         case 'planner':
           data = await generatePlan(uploadedText, '', 2)
-          break
-        case 'translate':
-          data = await translateText(uploadedText, 'Spanish')
           break
         default:
           break

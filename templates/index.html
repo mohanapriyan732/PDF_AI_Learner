@@ -12,15 +12,20 @@
         <div class="hero-text">
           <p class="eyebrow">AI Study Assistant</p>
           <h1>Turn any PDF into a smart learning experience.</h1>
-          <p class="subtitle">Upload a document and generate summaries, notes, quizzes, flashcards, interviews, study plans, and translations in seconds.</p>
+          <p class="subtitle">
+            Upload a document and generate summaries, notes, quizzes, flashcards,
+            interviews, study plans, and translations in seconds.
+          </p>
+
           <div class="actions">
             <label class="upload-card" for="pdf-input">
-              <input id="pdf-input" type="file" accept="application/pdf" />
               <span>📄 Upload PDF</span>
             </label>
+            <input id="pdf-input" type="file" accept="application/pdf" hidden />
             <button id="theme-toggle" class="ghost-btn" type="button">🌙 Theme</button>
           </div>
         </div>
+
         <div class="hero-illustration">
           <div class="orb"></div>
           <div class="card glass">
@@ -32,23 +37,23 @@
 
       <main>
         <section class="panel upload-panel">
-          <div id="drop-zone" class="drop-zone">
+          <label id="drop-zone" class="drop-zone" for="pdf-input">
             <p><strong>Drag and drop your PDF</strong></p>
             <p>or click to browse</p>
-          </div>
+          </label>
           <div id="upload-meta" class="upload-meta"></div>
         </section>
 
         <section class="panel tools-panel">
           <div class="tool-grid">
-            <button class="tool-btn" data-action="summary">🧠 Summary</button>
-            <button class="tool-btn" data-action="notes">📝 Notes</button>
-            <button class="tool-btn" data-action="flashcards">🃏 Flashcards</button>
-            <button class="tool-btn" data-action="quiz">❓ Quiz</button>
-            <button class="tool-btn" data-action="interview">🎤 Interview</button>
-            <button class="tool-btn" data-action="plan">📅 Planner</button>
-            <button class="tool-btn" data-action="translate">🌐 Translate</button>
-            <button class="tool-btn" data-action="export">📤 Export</button>
+            <button type="button" class="tool-btn" data-action="summary" disabled>🧠 Summary</button>
+            <button type="button" class="tool-btn" data-action="notes" disabled>📝 Notes</button>
+            <button type="button" class="tool-btn" data-action="flashcards" disabled>🃏 Flashcards</button>
+            <button type="button" class="tool-btn" data-action="quiz" disabled>❓ Quiz</button>
+            <button type="button" class="tool-btn" data-action="interview" disabled>🎤 Interview</button>
+            <button type="button" class="tool-btn" data-action="plan" disabled>📅 Planner</button>
+            <button type="button" class="tool-btn" data-action="translate" disabled>🌐 Translate</button>
+            <button type="button" class="tool-btn" data-action="export" disabled>📤 Export</button>
           </div>
         </section>
 
